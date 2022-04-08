@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        h1 {
+            color:red;
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <script type="module">
+
+        class HelloWorld extends HTMLElement  {
+            constructor() {
+                // 1 构建组件的时候的逻辑 hook
+                super();
+                console.log('constructor 被调用啦')
+                // this.attachShadow({ mode: 'open' });
+
+
+
+                const d = document.createElement('div');
+                const s = document.createElement('style');
+                s.innerHTML = `h1 {
+                            display: block;
+                            color:pink;
+                        }`
+                d.innerHTML = `
+                    <h1>Hello World! 内部</h1>
+                `;
+
+                this.appendChild(s);
+                this.appendChild(d);
+            }
+            // 2 当自定义元素首次被渲染到文档时候调用 
+            connectedCallback() {
+                console.log('connectedCallback 被调用啦')
+            }
+            // 3 当自定义元素在文档中被移除调用 
+            disconnectedCallback() {
+                console.log('disconnectedCallback 被调用啦')
+            }
+            // 4 当自定义组件被移动到新的文档时调用
+            adoptedCallback() {
+                console.log('adoptedCallback 被调用啦')
+
+            }
+            // 5 当自定义元素的属性更改时调用
+            attributeChangedCallback() {
+                console.log('attributeChangedCallback 被调用啦')
+            }
+
+            tiggerCustomMethod() {
+                alert('被调用了')
+            }
+        }
+        window.customElements.define('hello-would', HelloWorld)
+
+    </script>
+
+    <script>
+        window.onload = () => {
+            // 测试 disconnectedCallback
+            document.getElementById('deleteBtn').addEventListener('click', () => {
+                const el = document.getElementById('helloWould')
+                el.parentNode.removeChild(el)
+            })
+            // 测试 attributeChangedCallback
+            document.getElementById('changeAttrBtn').addEventListener('click', () => {
+                const el = document.getElementById('helloWould')
+                el.tiggerCustomMethod()
+                // el.setAttribute('now', Date.now())
+            })
+        }
+
+
+    </script>
+    <button id="deleteBtn">删除hellowould DOM - 测试 disconnectedCallback</button>
+
+    <button id="changeAttrBtn">调用自定义方法</button>
+
+
+    <h1>Hello Would外部</h1>
+    <hello-would id="helloWould"></hello-would>
+
+</body>
+
+</html>
